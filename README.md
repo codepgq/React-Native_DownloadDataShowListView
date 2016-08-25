@@ -1,2 +1,2 @@
 # React-Native_DownloadDataShowListView
-网络下载数据显示到listView中
+网络下载数据显示到listView中，进入二级页面
