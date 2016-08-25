@@ -14,6 +14,7 @@ import {
   NavigatorIOS,
   Image,
   ActivityIndicatorIOS,
+  TouchableHighlight,
 } from 'react-native';
 
 var URL = 'https://raw.githubusercontent.com/LeoMobileDeveloper/React-Native-Files/master/person.json';
@@ -33,6 +34,7 @@ var RootView = React.createClass({
       //加载完成后调用 请求数据
       this.dwonloadData();
     },
+
     dwonloadData(){
       fetch(URL)
         .then((response) => response.json())
@@ -44,26 +46,36 @@ var RootView = React.createClass({
         })
         .done();
     },
-    loadingView(){
+
+    render(){
+       if (!this.state.loaded) {
+          return this.renderLoadingView()
+       }else{
+          return this.renderListView()
+       }
+    },
+
+    renderLoadingView(){
       return(
-        <Image source={require('./img/background.png')} style={styles.backgroundImg}>
-          <Text style={styles.whiteText}>纸巾艺术</Text>
+        <Image source={require('./img/background.png')} style={styles.backgroundLoading}>
           <ActivityIndicatorIOS 
             style={{alignItems:'center',justifyContent:'center',height:50}}
             size= "large"
-            color= "gray"
+            color= "red"
           />
         </Image>
       );
     },
-    showListView(){
+   
+
+    renderListView(){
       return(
         <Image source={require('./img/background.png')} style={styles.backgroundImg}>
-          <Text style={styles.whiteText}>纸巾艺术</Text>
           <ListView
-            DataSource={this.state.users}
-            renderRow={this.fullList}
-            renderSeparator={(sectionID,rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator}
+            dataSource={this.state.users}
+            renderRow={this.renderRow}
+            style={styles.fullList}
+            renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
           />
         </Image>
       );
@@ -76,27 +88,34 @@ var RootView = React.createClass({
          underlayColor = '#ddd'>
        <View style={styles.rightCongtainer}>
           <Text style={styles.whiteText}>{user.nickname}</Text>
-         <Text style={styles.whiteText}>{user.realname}</Text>
+          <Text style={styles.whiteText}>{user.realname}</Text>
         </View>
        </TouchableHighlight>
      );
     },
     rowClicked(user){
       console.log(user);
-    },
 
-    render(){
-      return (
-       if (!this.state.loaded) {
-          return this.loadingView()
-       }else{
-          return this.showListView()
-       }
-      );
-    }
+      this.props.navigator.push({
+        title:"我是第二个页面",
+        component:SecondPage,
+        passProps:{user:user},
+      })
+    },
+    
 });
 
-
+//添加一个二级页面
+var SecondPage = React.createClass({
+  render(){
+    return(
+      <View style={styles.container}>
+        <Text style={styles.blackText}>{this.props.user.nickname}</Text>
+        <Text style={styles.blackText}>{this.props.user.realname}</Text>
+      </View>
+    );
+  }
+});
 
 var DownloadDataShowListView = React.createClass({
   render: function() {
